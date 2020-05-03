@@ -1,12 +1,7 @@
-const conn = require("../db/db");
+const commentSchema = new mongoose.Schema({
+  username: String,
+  text: String,
+  createdAt: Date,
+})
 
-const Comment = conn.model(
-  "Comment",
-  new mongoose.Schema({
-    username: String,
-    text: String,
-    createdAt: Date
-  })
-);
-
-module.exports = Comment;
+module.exports = commentSchema;

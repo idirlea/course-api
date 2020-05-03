@@ -1,4 +1,3 @@
-const conn = require("../db/db");
 const mongoose = require("mongoose");
 
 const courseSchema = mongoose.Schema(
@@ -14,6 +13,16 @@ const courseSchema = mongoose.Schema(
       trim: true
     },
     author: String,
+    poster: {
+      type: String,
+      required: false,
+      trim: true
+    },
+    thumbnail: {
+      type: String,
+      required: false,
+      trim: true
+    },
     subscribers: {
       type: Number,
       required: false,
@@ -39,6 +48,4 @@ const courseSchema = mongoose.Schema(
   }
 );
 
-const Course = conn.model("Course", courseSchema);
-
-module.exports = Course;
+module.exports = courseSchema

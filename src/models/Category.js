@@ -1,10 +1,15 @@
-const conn = require("../db/db");
-const Category = conn.model(
-  "Category",
-  new mongoose.Schema({
+const mongoose = require('mongoose');
+
+const categorySchema = new mongoose.Schema(
+  {
     name: String,
-    description: String
-  })
+  },
+  {
+    timestamps: {
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+    },
+  }
 );
 
-module.exports = Category;
+module.exports = categorySchema

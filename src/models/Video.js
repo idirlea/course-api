@@ -1,4 +1,3 @@
-const conn = require("../db/db");
 const mongoose = require("mongoose");
 
 const videoSchema = mongoose.Schema(
@@ -6,53 +5,63 @@ const videoSchema = mongoose.Schema(
     title: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     description: {
       type: String,
       required: false,
-      trim: true
+      trim: true,
     },
     streamSource: {
       type: String,
       required: false,
-      trim: true
+      trim: true,
     },
     videoUrl: {
       type: String,
       required: false,
-      trim: true
+      trim: true,
     },
     videoThumbnail: {
       type: String,
       required: false,
-      trim: true
+      trim: true,
     },
     views: {
       type: Number,
       required: false,
-      default: 0
+      default: 0,
     },
     likes: {
       type: Number,
       required: false,
-      default: 0
+      default: 0,
+    },
+    category: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    isFree: {
+      type: Boolean,
+      required: false,
+      default: false
     },
     comments: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Comment"
-      }
-    ]
+        ref: 'Comment',
+      },
+    ],
   },
   {
     timestamps: {
-      createdAt: "created_at",
-      updatedAt: "updated_at"
-    }
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+    },
   }
 );
 
-const Video = conn.model("Video", videoSchema);
 
-module.exports = Video;
+
+module.exports = videoSchema

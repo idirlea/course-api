@@ -1,18 +1,36 @@
-const express = require("express");
+const express = require('express')
+const fs = require('fs')
+const path = require('path')
 const router = express.Router();
-const conn = require('../db/db')
 
-router.get("/image/:filename", (req, res) => {
-  conn.GridFSBucket.find({
-    filename: req.params.filename
-  }).toArray((err, files) => {
-    if (!files || files.length === 0) {
-      return res.status(404).json({
-        err: "no files exist"
-      });
-    }
-    conn.GridFSBucket.openDownloadStreamByName(req.params.filename).pipe(res);
-  });
-});
+const staticBasePath = './public/uploads'
+
+router.get('/image/:filename', (req, res) => {
+  let fileLoc = path.resolve(staticBasePath)
+  fileLoc = path.join(fileLoc, `original_${req.params.filename}`)
+
+  const stream = fs.createReadStream(fileLoc)
+
+  stream.on('error', function(error) {
+    res.writeHead(404, 'Not Found')
+    res.end()
+  })
+
+  stream.pipe(res)
+})
+
+router.get('/image/thumb/:filename', (req, res) => {
+  let fileLoc = path.resolve(staticBasePath)
+  fileLoc = path.join(fileLoc, req.params.filename)
+
+  const stream = fs.createReadStream(fileLoc)
+
+  stream.on('error', function(error) {
+    res.writeHead(404, 'Not Found')
+    res.end()
+  })
+
+  stream.pipe(res)
+})
 
 module.exports = router;
