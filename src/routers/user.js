@@ -70,6 +70,7 @@ router.post("/users/login", sanitizeLoginInputs, async (req, res) => {
   //Login a registered user
   try {
     const { email, password } = req.body;
+
     const user = await User.findByCredentials(email, password);
 
     if (!user) {
@@ -80,7 +81,6 @@ router.post("/users/login", sanitizeLoginInputs, async (req, res) => {
     const token = await user.generateAuthToken();
     res.json({ user, token });
   } catch (error) {
-    console.log(error)
     res.status(400).json(error);
   }
 });

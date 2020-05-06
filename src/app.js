@@ -7,11 +7,11 @@ require('./db/db')
 // routers
 const mainRouter = require("./routers/home");
 const userRouter = require("./routers/user");
-const courseRouter = require("./routers/course");
-const videoRouter = require("./routers/video");
-const imageRouter = require("./routers/image");
-const categoryRouter = require('./routers/category');
-const pageRouter = require('./routers/page');
+const courseRouter = require("./routers/course")
+const videoRouter = require("./routers/video")
+const imageRouter = require("./routers/image")
+const categoryRouter = require('./routers/category')
+const pageRouter = require('./routers/page')
 const viewRouter = require('./routers/view')
 const subscribeRouter = require('./routers/subscriber')
 
