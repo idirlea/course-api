@@ -1,104 +1,114 @@
-const mongoose = require("mongoose")
-const validator = require("validator")
-const bcrypt = require("bcryptjs")
-const jwt = require("jsonwebtoken")
+const mongoose = require('mongoose')
+const validator = require('validator')
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
-const {conn} = require('../db/db')
+const { conn } = require('../db/db')
 
 const userSchema = mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     email: {
       type: String,
       required: true,
       unique: true,
       lowercase: true,
-      validate: value => {
+      validate: (value) => {
         if (!validator.isEmail(value)) {
-          throw new Error({ error: "Invalid Email address" });
+          throw new Error({ error: 'Invalid Email address' })
         }
-      }
+      },
     },
     password: {
       type: String,
       required: true,
-      minLength: 7
-    },
-    isAdmin: {
-      type: Boolean,
-      required: false,
-      defalut: false
+      minLength: 7,
     },
     tokens: [
       {
         token: {
           type: String,
-          required: true
-        }
-      }
+          required: true,
+        },
+      },
     ],
     courses: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Course"
-      }
-    ]
+        ref: 'Course',
+      },
+    ],
+    agreeToTermsOfService: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    allowExtraEmails: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    isAdmin: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   {
     timestamps: {
-      createdAt: "created_at",
-      updatedAt: "updated_at"
-    }
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+    },
   }
-);
+)
 
-userSchema.pre("save", async function(next) {
+userSchema.pre('save', async function(next) {
   // Hash the password before saving the user model
-  const user = this;
+  const user = this
 
-  if (user.isModified("password")) {
-    user.password = await bcrypt.hash(user.password, 8);
+  if (user.isModified('password')) {
+    user.password = await bcrypt.hash(user.password, 8)
   }
-  next();
-});
+  next()
+})
 
 userSchema.methods.generateAuthToken = async function() {
   // Generate an auth token for the user
-  const user = this;
-  const token = jwt.sign({ _id: user._id }, process.env.JWT_KEY);
-  user.tokens = user.tokens.concat({ token });
+  const user = this
+  const token = jwt.sign({ _id: user._id }, process.env.JWT_KEY)
+  user.tokens = user.tokens.concat({ token })
 
-  await user.save();
+  await user.save()
 
-  return token;
-};
+  return token
+}
 
 userSchema.statics.findByCredentials = async (email, password) => {
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email })
 
   if (!user) {
-    throw { error: "Invalid login credentials" };
+    throw { error: 'Invalid login credentials' }
   }
-  const isPasswordMatch = await bcrypt.compare(password, user.password);
+  const isPasswordMatch = await bcrypt.compare(password, user.password)
 
   if (!isPasswordMatch) {
-    throw { error: "Invalid login credentials" };
+    throw { error: 'Invalid login credentials' }
   }
-  return user;
-};
+  return user
+}
 
 userSchema.statics.findByEmail = async (email) => {
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email })
   if (!user) {
-    throw { error: "Invalid emai" };
+    throw { error: 'Invalid emai' }
   }
 
-  return user;
-};
+  return user
+}
 
 const User = conn.model('User', userSchema)
 

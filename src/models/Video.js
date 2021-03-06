@@ -45,7 +45,22 @@ const videoSchema = mongoose.Schema(
     isFree: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
+    },
+    isFeatured: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    repoLink: {
+      type: String,
+      required: false,
+      default: '',
+    },
+    order: {
+      type: Number,
+      required: false,
+      default: 0,
     },
     comments: [
       {
@@ -60,8 +75,6 @@ const videoSchema = mongoose.Schema(
       updatedAt: 'updated_at',
     },
   }
-);
-
-
+)
 
 module.exports = videoSchema

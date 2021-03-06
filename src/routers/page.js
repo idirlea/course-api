@@ -16,7 +16,7 @@ router.get(
   ],
   async (req, res) => {
     try {
-      const query = req.query && req.query.id ? { _id: req.query.id } : {};
+      const query = req.query && req.query.seoLink ? { seoLink: req.query.seoLink } : {}
       const pages = await Page.find(query);
 
       if (!pages) {

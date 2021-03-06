@@ -18,9 +18,7 @@ const conn = mongoose.createConnection(config.parsed.MONGODB_URL, {
 });
 
 conn.on("open", function() {
-  conn.GridFSBucket = new mongoose.mongo.GridFSBucket(conn.db, {
-    bucketName: "uploads"
-  });
+  console.log('connected to mongodb')
 });
 
 const Category = conn.model('Category', categorySchema)

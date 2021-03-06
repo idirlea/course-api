@@ -5,47 +5,52 @@ const courseSchema = mongoose.Schema(
     title: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
-    description: {
+    shortDescription: {
       type: String,
       required: false,
-      trim: true
+      trim: true,
+    },
+    content: {
+      type: String,
+      required: false,
+      trim: true,
     },
     author: String,
     poster: {
       type: String,
       required: false,
-      trim: true
+      trim: true,
     },
     thumbnail: {
       type: String,
       required: false,
-      trim: true
+      trim: true,
     },
     subscribers: {
       type: Number,
       required: false,
-      default: 0
+      default: 0,
     },
     views: {
       type: Number,
       required: false,
-      default: 0
+      default: 0,
     },
     videos: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Video"
-      }
-    ]
+        ref: 'Video',
+      },
+    ],
   },
   {
     timestamps: {
-      createdAt: "created_at",
-      updatedAt: "updated_at"
-    }
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+    },
   }
-);
+)
 
 module.exports = courseSchema

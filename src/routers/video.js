@@ -41,7 +41,8 @@ router.get('/videos', getVideoSanitize, async (req, res) => {
       ? { ...queryById, ...(rest || {}) }
       : {};
 
-    const videos = await Video.find(query);
+    const videos = await Video.find(query)
+      .sort({ order: 'asc' })
 
     if (!videos) {
       return res.status(401).json({ error: 'Fetching videos failed!' });
@@ -79,8 +80,8 @@ router.post(
   async (req, res) => {
     try {
       const { _id, ...rest } = req.body;
+      const video = new Video(rest)
 
-      const video = new Video({ ...rest, videoThumbnail: req.file.filename });
       await video.save();
 
       res.status(201).send({ video });

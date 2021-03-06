@@ -5,7 +5,9 @@ const router = express.Router();
 // const auth = require("../middleware/auth");
 
 const { Course } = require('../db/db')
-const upload = require("../middleware/upload");
+const upload = require("../middleware/upload")
+const resize = require('../middleware/resize')
+
 var cpUpload = upload.fields([
   { name: "thumbnail", maxCount: 1 },
   { name: "poster", maxCount: 1 },
@@ -24,75 +26,62 @@ router.get("/courses", async (req, res) => {
   }
 });
 
-router.put("/courses", cpUpload, async (req, res) => {
+router.put('/courses', [cpUpload, resize], async (req, res) => {
   try {
-    const { _id, videos, ...rest } = req.body;
-    const thumbnail = req.files["thumbnail"] && req.files["thumbnail"][0];
-    const poster = req.files["poster"] && req.files["poster"][0];
-    const videoArray = videos.split(',') || [];
-
-    // const course = await Course.findById(_id);
-    // if (!course) {
-    //   throw new Error({ error: "Invalid course id" });
-    // }
-
-    // course.videos.pull(...videoArray);
-    // if (videoArray.length) {
-    //   course.videos.push({
-    //     $each: videoArray,
-    //     $position: 0,
-    //   });
-    // }
-    // await course.save();
+    const { _id, videos, ...rest } = req.body
+    const videoArray = videos.split(',') || []
 
     const updatedCourse = await Course.findOneAndUpdate(
       { _id: _id },
       {
         $set: {
-          videos: null
-        },
-        // $push: {
-        //   videos: {
-        //     $each: videoArray,
-        //     $position: 0,
-        //   }
-        // },
-        $set: {
           ...rest,
-          thumbnail,
-          poster,
+          videos: videoArray,
         },
-      },
-      { multi: true }
-    );
+      }
+    )
 
-    res.json({ course: updatedCourse });
+    res.json({ course: updatedCourse })
   } catch (error) {
-    console.log(error);
-    res.status(400).json(error);
+    console.log(error)
+    res.status(400).json(error)
   }
-});
+})
 
-router.post("/courses", cpUpload, async (req, res) => {
+router.post('/courses/editor', [upload.single('upload'), resize], async (req, res) => {
   try {
-    const thumbnail = req.files["thumbnail"] && req.files["thumbnail"][0];
-    const poster = req.files["poster"] && req.files["poster"][0];
+    res.status(201).send({
+      fileName: req.body.videoThumbnail,
+      uploaded: 1,
+      url: 'http://localhost:3000/image/' + req.body.videoThumbnail
+    })
+  } catch (error) {
+    res.status(400).json(error)
+  }
+})
 
-    const { _id, ...rest } = req.body;
+
+router.post('/courses', [cpUpload, resize], async (req, res) => {
+  try {
+    const thumbnail = req.files && req.files['thumbnail'] && req.files['thumbnail'][0]
+    const poster = req.files && req.files['poster'] && req.files['poster'][0]
+
+    const { _id, ...rest } = req.body
+    const videoArray = videos.split(',') || []
 
     const course = new Course({
       ...rest,
-      thumbnail: thumbnail.filename,
-      poster: poster.filename,
-    });
+      thumbnail: (thumbnail && thumbnail.filename) || '',
+      poster: (poster && poster.filename) || '',
+    })
 
-    await course.save();
+    await course.save()
 
-    res.status(201).send({ course });
+    res.status(201).send({ course })
   } catch (error) {
-    res.status(400).json(error);
+    res.status(400).json(error)
   }
-});
+})
 
 router.delete("/courses", async (req, res) => {
   try {
